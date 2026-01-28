@@ -354,44 +354,88 @@ const CommunityStories = () => {
                   >
                     <Card className="h-full border-border hover:border-primary/30 transition-all duration-300 overflow-hidden">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      {/* Story Image */}
-                      <div className="relative h-48 overflow-hidden">
-                        <img
+                      {/* Story Image - Enhanced */}
+                      <div className="relative h-72 overflow-hidden bg-gradient-to-b from-card/50 to-card/80">
+                        <motion.img
                           src={story.id % 2 === 0 ? portrait1Img : portrait2Img}
                           alt={story.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                          whileHover={{ scale: 1.08 }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
-                        <div className="absolute top-3 left-3">
-                          <Badge className="bg-primary text-primary-foreground">
+                        {/* Gradient Overlay for better text visibility */}
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-card/95" />
+                        
+                        {/* Lighting Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-accent/5" />
+                        
+                        {/* Featured Badge - Enhanced positioning */}
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          className="absolute top-4 right-4 z-10"
+                        >
+                          <Badge className="bg-primary text-primary-foreground shadow-lg border border-primary/30">
+                            <Zap className="w-3 h-3 mr-1" />
                             Featured
                           </Badge>
-                        </div>
+                        </motion.div>
+
+                        {/* Face Highlight Circle */}
+                        <motion.div
+                          className="absolute inset-0 rounded-full border-2 border-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          style={{
+                            width: '280px',
+                            height: '280px',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -45%)',
+                          }}
+                        />
                       </div>
-                      <CardHeader className="relative">
-                        <div className="flex items-start gap-4 mb-4 mt-4">
-                          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-3xl border-2 border-primary/20">
-                            {story.avatar}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <CardTitle className="text-2xl">{story.name}</CardTitle>
-                              <Badge className="bg-primary text-primary-foreground">
-                                Featured
-                              </Badge>
+                      <CardHeader className="relative -mt-12 mb-4">
+                        <div className="flex items-end gap-6 mb-6">
+                          {/* Profile Avatar - Enhanced */}
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            whileHover={{ scale: 1.1 }}
+                            className="relative flex-shrink-0"
+                          >
+                            <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary to-accent p-1 shadow-xl">
+                              <div className="w-full h-full rounded-xl bg-card flex items-center justify-center text-5xl border-2 border-primary/30">
+                                {story.avatar}
+                              </div>
                             </div>
-                            <CardDescription className="text-base">
-                              {story.currentRole} @ {story.currentCompany}
-                            </CardDescription>
-                            <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                              <div className="flex items-center gap-1">
-                                <Briefcase className="w-4 h-4" />
-                                <span>{story.yearsInSRE}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Award className="w-4 h-4" />
-                                <span>{story.location}</span>
-                              </div>
+                            <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white border-2 border-card shadow-lg">
+                              <CheckCircle2 className="w-5 h-5" />
+                            </div>
+                          </motion.div>
+
+                          <div className="flex-1">
+                            <div className="mb-2">
+                              <CardTitle className="text-2xl md:text-3xl">{story.name}</CardTitle>
+                              <CardDescription className="text-base font-semibold text-primary/80 mt-1">
+                                {story.currentRole}
+                              </CardDescription>
+                              <CardDescription className="text-sm mt-1">
+                                @ {story.currentCompany}
+                              </CardDescription>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-muted-foreground">
+                              <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                className="flex items-center gap-2 px-3 py-1 rounded-lg bg-secondary/50"
+                              >
+                                <Briefcase className="w-4 h-4 text-primary" />
+                                <span className="font-medium">{story.yearsInSRE}</span>
+                              </motion.div>
+                              <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                className="flex items-center gap-2 px-3 py-1 rounded-lg bg-secondary/50"
+                              >
+                                <Award className="w-4 h-4 text-accent" />
+                                <span className="font-medium">{story.location}</span>
+                              </motion.div>
                             </div>
                           </div>
                         </div>
