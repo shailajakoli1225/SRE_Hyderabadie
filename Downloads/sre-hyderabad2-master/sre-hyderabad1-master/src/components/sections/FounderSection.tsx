@@ -4,6 +4,7 @@ import { useScroll, useTransform } from 'framer-motion';
 import { Sparkles, Quote, Target, Zap, Heart, ArrowRight, Linkedin, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import vinayProfileImg from '@/assets/vinay-profile.jpg';
+import telanganaImg from '@/assets/illustration-telangana-formation-day-celebration-with-iconic-landmarks.jpg';
 
 export function FounderSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -20,8 +21,16 @@ export function FounderSection() {
       ref={sectionRef}
       className="relative py-24 md:py-32 overflow-hidden"
     >
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-cover bg-center bg-fixed opacity-8 md:opacity-12" style={{ backgroundImage: `url(${telanganaImg})` }} />
+        {/* Multi-layer gradient overlays for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-transparent to-background/90" />
+      </div>
+
       {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10">
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-accent/5 to-teal-500/5 z-0">
         <motion.div
           className="absolute inset-0"
           animate={{
@@ -33,14 +42,18 @@ export function FounderSection() {
             ease: 'linear',
           }}
           style={{
-            backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--primary) / 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--accent) / 0.15) 0%, transparent 50%)',
+            backgroundImage: 'radial-gradient(circle at 20% 50%, hsl(var(--primary) / 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 80%, hsl(var(--accent) / 0.08) 0%, transparent 50%)',
             backgroundSize: '200% 200%',
           }}
         />
       </div>
 
+      {/* Decorative gradient elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl z-0" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-teal-500/5 rounded-full blur-3xl z-0" />
+
       {/* Grid Pattern */}
-      <div className="absolute inset-0 grid-pattern opacity-10" />
+      <div className="absolute inset-0 grid-pattern opacity-5 z-0" />
 
       {/* Floating Particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
