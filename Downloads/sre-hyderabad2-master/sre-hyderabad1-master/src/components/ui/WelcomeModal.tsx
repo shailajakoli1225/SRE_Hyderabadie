@@ -14,7 +14,7 @@ const WELCOME_MODAL_KEY = "sre_hyderabad_welcome_shown";
 
 export const WelcomeModal = ({
   autoOpen = true,
-  showFrequency = "onFirstVisit",
+  showFrequency = "onPageLoad",
 }: WelcomeModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"about" | "community">("about");
@@ -22,13 +22,19 @@ export const WelcomeModal = ({
   const location = useLocation();
   const hasShownOnCurrentPage = useRef(false);
 
-  // Smart display logic: show only on first website visit
+  // Smart display logic: show on page load/refresh
   useEffect(() => {
     if (!autoOpen) return;
 
     const hasShownBefore = localStorage.getItem(WELCOME_MODAL_KEY) === "true";
 
-    if (showFrequency === "onFirstVisit") {
+    if (showFrequency === "onPageLoad") {
+      // Show on every page load/refresh
+      const timer = setTimeout(() => {
+        setIsOpen(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    } else if (showFrequency === "onFirstVisit") {
       // Show only on first visit ever
       if (!hasShownBefore) {
         const timer = setTimeout(() => {
@@ -51,7 +57,7 @@ export const WelcomeModal = ({
         return () => clearTimeout(timer);
       }
     }
-  }, [autoOpen, showFrequency, location.pathname]);
+  }, [autoOpen, showFrequency]);
 
   const handleClose = useCallback(() => {
     setIsOpen(false);
@@ -133,7 +139,7 @@ export const WelcomeModal = ({
               stiffness: 300,
               mass: 1,
             }}
-            className="relative w-full max-w-sm sm:max-w-2xl md:max-w-3xl max-h-[90vh] sm:max-h-[85vh] md:max-h-[80vh] overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl border border-white/10 backdrop-blur-xl bg-gradient-to-br from-slate-950/90 via-slate-900/80 to-slate-950/90"
+            className="relative w-full max-w-sm sm:max-w-2xl md:max-w-3xl max-h-[90vh] sm:max-h-[85vh] md:max-h-[80vh] overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl border border-cyan-500/20 backdrop-blur-xl bg-gradient-to-br from-slate-950/95 via-cyan-950/30 to-teal-950/20"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Animated gradient top bar */}
@@ -166,7 +172,7 @@ export const WelcomeModal = ({
                 initial={{ opacity: 0, x: -40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.15, duration: 0.6 }}
-                className="flex-1 min-w-0 p-5 lg:p-8 flex flex-col justify-between bg-gradient-to-br from-slate-900/50 to-transparent overflow-y-auto"
+                className="flex-1 min-w-0 p-5 lg:p-8 flex flex-col justify-between bg-gradient-to-br from-cyan-950/30 via-slate-900/40 to-transparent overflow-y-auto"
               >
                 {/* Header */}
                 <div>
@@ -174,10 +180,10 @@ export const WelcomeModal = ({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/20 border border-cyan-500/30 mb-6"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/30 border border-cyan-400/40 mb-6"
                   >
-                    <Zap size={16} className="text-cyan-300" />
-                    <span className="text-sm font-semibold text-cyan-300">
+                    <Zap size={16} className="text-cyan-200" />
+                    <span className="text-sm font-semibold text-cyan-200">
                       Welcome to SRE Community
                     </span>
                   </motion.div>
@@ -215,7 +221,7 @@ export const WelcomeModal = ({
                     <motion.div
                       key={idx}
                       whileHover={{ scale: 1.05, y: -5 }}
-                      className="p-3 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-all text-center"
+                      className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-400/20 hover:border-cyan-400/40 transition-all text-center"
                     >
                       <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">
                         {stat.value}
@@ -230,7 +236,7 @@ export const WelcomeModal = ({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="flex gap-2 mb-5 border-b border-white/10"
+                  className="flex gap-2 mb-5 border-b border-cyan-400/20"
                 >
                   {["about", "community"].map((tab) => (
                     <motion.button
@@ -241,7 +247,7 @@ export const WelcomeModal = ({
                           ? "text-cyan-400 border-b-2 border-cyan-400"
                           : "text-slate-400 hover:text-slate-300"
                       }`}
-                      whileHover={{ color: "#e0e7ff" }}
+                      whileHover={{ color: "#06b6d4" }}
                     >
                       {tab === "about" ? "Why Join?" : "Community"}
                     </motion.button>
@@ -262,7 +268,7 @@ export const WelcomeModal = ({
                         <motion.div
                           key={idx}
                           whileHover={{ scale: 1.05, y: -3 }}
-                        className="p-3 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all"
+                        className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-400/20 hover:border-cyan-400/50 transition-all"
                         >
                           <div className="text-2xl mb-1.5">{feature.icon}</div>
                           <div className="font-bold text-white text-xs mb-0.5">
@@ -312,7 +318,7 @@ export const WelcomeModal = ({
                     }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleNavigate("/join")}
-                    className="px-5 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-bold text-xs flex items-center gap-2 transition-all hover:from-green-500 hover:to-green-600"
+                      className="px-5 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg font-bold text-xs flex items-center gap-2 transition-all hover:from-cyan-500 hover:to-teal-500 shadow-lg shadow-cyan-500/20"
                   >
                     Join Community <ArrowRight size={14} />
                   </motion.button>
@@ -343,7 +349,7 @@ export const WelcomeModal = ({
                 initial={{ opacity: 0, x: 40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="flex-1 min-w-0 p-5 lg:p-7 flex items-center justify-center min-h-72 lg:min-h-auto bg-gradient-to-bl from-slate-800/40 via-transparent to-slate-900/40 overflow-hidden"
+                className="flex-1 min-w-0 p-5 lg:p-7 flex items-center justify-center min-h-72 lg:min-h-auto bg-gradient-to-bl from-cyan-900/20 via-transparent to-teal-900/20 overflow-hidden"
               >
                 <FloatingMediaContent />
               </motion.div>
