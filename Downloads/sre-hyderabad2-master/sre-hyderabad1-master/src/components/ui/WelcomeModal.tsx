@@ -7,12 +7,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 interface WelcomeModalProps {
   autoOpen?: boolean;
-  showFrequency?: "onPageLoad" | "onRouteChange";
+  showFrequency?: "onPageLoad" | "onRouteChange" | "onFirstVisit";
 }
+
+const WELCOME_MODAL_KEY = "sre_hyderabad_welcome_shown";
 
 export const WelcomeModal = ({
   autoOpen = true,
-  showFrequency = "onRouteChange",
+  showFrequency = "onFirstVisit",
 }: WelcomeModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"about" | "community">("about");
@@ -20,23 +22,34 @@ export const WelcomeModal = ({
   const location = useLocation();
   const hasShownOnCurrentPage = useRef(false);
 
-  // Smart display logic: show once per page visit
+  // Smart display logic: show only on first website visit
   useEffect(() => {
     if (!autoOpen) return;
 
-    // Reset the flag when route changes
-    if (showFrequency === "onRouteChange") {
+    const hasShownBefore = localStorage.getItem(WELCOME_MODAL_KEY) === "true";
+
+    if (showFrequency === "onFirstVisit") {
+      // Show only on first visit ever
+      if (!hasShownBefore) {
+        const timer = setTimeout(() => {
+          setIsOpen(true);
+          localStorage.setItem(WELCOME_MODAL_KEY, "true");
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    } else if (showFrequency === "onRouteChange") {
+      // Reset the flag when route changes
       hasShownOnCurrentPage.current = false;
-    }
 
-    // Show modal only once per page
-    if (!hasShownOnCurrentPage.current) {
-      const timer = setTimeout(() => {
-        setIsOpen(true);
-        hasShownOnCurrentPage.current = true;
-      }, 500);
+      // Show modal only once per page
+      if (!hasShownOnCurrentPage.current) {
+        const timer = setTimeout(() => {
+          setIsOpen(true);
+          hasShownOnCurrentPage.current = true;
+        }, 500);
 
-      return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
+      }
     }
   }, [autoOpen, showFrequency, location.pathname]);
 
@@ -90,22 +103,22 @@ export const WelcomeModal = ({
           className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xl flex items-center justify-center p-4 pt-24"
           onClick={handleClose}
         >
-          {/* Animated background orbs */}
+          {/* Animated background orbs - Cyan/Teal theme */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <motion.div
               animate={{ x: [0, 100, 0], y: [0, 50, 0] }}
               transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-0 left-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-3xl opacity-20"
+              className="absolute top-0 left-0 w-96 h-96 bg-cyan-500 rounded-full mix-blend-screen filter blur-3xl opacity-20"
             />
             <motion.div
               animate={{ x: [0, -100, 0], y: [0, -50, 0] }}
               transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-3xl opacity-20"
+              className="absolute bottom-0 right-0 w-96 h-96 bg-teal-500 rounded-full mix-blend-screen filter blur-3xl opacity-20"
             />
             <motion.div
               animate={{ scale: [1, 1.1, 1], opacity: [0.1, 0.2, 0.1] }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-600 rounded-full mix-blend-screen filter blur-3xl"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-cyan-400 rounded-full mix-blend-screen filter blur-3xl"
             />
           </div>
 
@@ -127,7 +140,7 @@ export const WelcomeModal = ({
             <motion.div
               animate={{ opacity: [0.5, 1, 0.5], x: [0, 10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
-              className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
+              className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 via-teal-500 to-cyan-400"
             />
 
             {/* Close Button */}
@@ -161,10 +174,10 @@ export const WelcomeModal = ({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/20 border border-blue-500/30 mb-6"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/20 border border-cyan-500/30 mb-6"
                   >
-                    <Zap size={16} className="text-yellow-400" />
-                    <span className="text-sm font-semibold text-blue-300">
+                    <Zap size={16} className="text-cyan-300" />
+                    <span className="text-sm font-semibold text-cyan-300">
                       Welcome to SRE Community
                     </span>
                   </motion.div>
@@ -176,7 +189,7 @@ export const WelcomeModal = ({
                     className="text-3xl lg:text-4xl font-black text-white mb-3 leading-tight"
                   >
                     Scale Infrastructure with{" "}
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-cyan-300">
                       Experts
                     </span>
                   </motion.h2>
@@ -204,7 +217,7 @@ export const WelcomeModal = ({
                       whileHover={{ scale: 1.05, y: -5 }}
                       className="p-3 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-all text-center"
                     >
-                      <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+                      <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">
                         {stat.value}
                       </div>
                       <div className="text-xs text-slate-400 mt-1">{stat.label}</div>
@@ -225,7 +238,7 @@ export const WelcomeModal = ({
                       onClick={() => setActiveTab(tab as "about" | "community")}
                       className={`px-3 py-1.5 font-semibold text-xs transition-colors ${
                         activeTab === tab
-                          ? "text-blue-400 border-b-2 border-blue-400"
+                          ? "text-cyan-400 border-b-2 border-cyan-400"
                           : "text-slate-400 hover:text-slate-300"
                       }`}
                       whileHover={{ color: "#e0e7ff" }}
@@ -249,7 +262,7 @@ export const WelcomeModal = ({
                         <motion.div
                           key={idx}
                           whileHover={{ scale: 1.05, y: -3 }}
-                          className="p-3 rounded-lg bg-white/5 border border-white/10 hover:border-blue-500/30 transition-all"
+                        className="p-3 rounded-lg bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-all"
                         >
                           <div className="text-2xl mb-1.5">{feature.icon}</div>
                           <div className="font-bold text-white text-xs mb-0.5">
@@ -269,15 +282,15 @@ export const WelcomeModal = ({
                       exit={{ opacity: 0, x: 20 }}
                       className="space-y-2 mb-6"
                     >
-                      <motion.div className="p-3 rounded-lg bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30">
+                      <motion.div className="p-3 rounded-lg bg-gradient-to-r from-cyan-600/20 to-teal-600/20 border border-cyan-500/30">
                         <div className="font-bold text-white text-sm mb-0.5">🎯 Weekly Meetups</div>
                         <div className="text-xs text-slate-300">Connect with 200+ members every week</div>
                       </motion.div>
-                      <motion.div className="p-3 rounded-lg bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30">
+                      <motion.div className="p-3 rounded-lg bg-gradient-to-r from-teal-600/20 to-cyan-600/20 border border-teal-500/30">
                         <div className="font-bold text-white text-sm mb-0.5">🚀 Technical Workshops</div>
                         <div className="text-xs text-slate-300">Learn K8s, monitoring, incident response & more</div>
                       </motion.div>
-                      <motion.div className="p-3 rounded-lg bg-gradient-to-r from-pink-600/20 to-blue-600/20 border border-pink-500/30">
+                      <motion.div className="p-3 rounded-lg bg-gradient-to-r from-cyan-500/20 to-teal-500/20 border border-cyan-500/30">
                         <div className="font-bold text-white text-sm mb-0.5">🤝 Mentorship Program</div>
                         <div className="text-xs text-slate-300">Get guidance from industry experts</div>
                       </motion.div>
@@ -306,11 +319,11 @@ export const WelcomeModal = ({
                   <motion.button
                     whileHover={{
                       scale: 1.08,
-                      boxShadow: "0 15px 20px -5px rgba(59, 130, 246, 0.3)",
+                      boxShadow: "0 15px 20px -5px rgba(34, 211, 238, 0.3)",
                     }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleNavigate("/community")}
-                    className="px-5 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-bold text-xs flex items-center gap-2 transition-all hover:from-blue-500 hover:to-blue-600"
+                    className="px-5 py-2 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg font-bold text-xs flex items-center gap-2 transition-all hover:from-cyan-500 hover:to-teal-500"
                   >
                     Explore <ArrowRight size={14} />
                   </motion.button>

@@ -78,7 +78,7 @@ const App = () => (
         <Sonner />
         <AppLoader />
         <BrowserRouter>
-          <WelcomeModal autoOpen={true} showFrequency="onRouteChange" />
+          <WelcomeModal autoOpen={true} showFrequency="onFirstVisit" />
           <AnimatedRoutes />
           <Chatbot />
           <ScrollToTop />
